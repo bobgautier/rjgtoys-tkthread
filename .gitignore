@@ -1,0 +1,7 @@
+__pycache__
+*.pyc
+rjgtoys.pyano.egg-info/
+.coverage
+htmlcov
+.eggs
+rjgtoys_tkthread.egg-info/
