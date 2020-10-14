@@ -5,6 +5,7 @@ tkthread - a bridge between threads and tkinter
 
 import os
 import queue
+import threading
 
 import tkinter as tk
 
@@ -37,3 +38,17 @@ class WorkQueue(queue.Queue):
     def put(self, work, block=True, timeout=None):
         super().put(work, block=block, timeout=timeout)
         os.write(self._pipe_w, b"x")
+
+
+class WorkGenerator(threading.Thread):
+
+    def __init__(self, *, group=None, source=None, worker=None, window=None, name=None, queue=None, maxsize=0, start=True):
+        super().__init__(group=group, name=name, daemon=True)
+        self._source = source
+        self._queue = queue or WorkQueue(window=window, worker=worker, maxsize=maxsize)
+        if start:
+            self.start()
+
+    def run(self):
+        for work in self._source:
+            self._queue.put(work)
