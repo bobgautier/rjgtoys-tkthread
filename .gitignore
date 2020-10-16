@@ -5,3 +5,4 @@ rjgtoys.pyano.egg-info/
 htmlcov
 .eggs
 rjgtoys_tkthread.egg-info/
+build/
