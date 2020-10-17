@@ -1,5 +1,4 @@
 Reference
 =========
 
-TBD
-
+.. automodule:: rjgtoys.tkthread

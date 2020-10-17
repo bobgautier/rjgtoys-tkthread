@@ -31,6 +31,7 @@ sys.path.insert(0,os.path.join(os.path.dirname(__file__),'_ext'))
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
+    'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
@@ -195,7 +196,7 @@ latex_elements = dict(
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'tkthread.tex', u'tkthread: Support for using threads with tkinter',
+  ('index', 'tkthread.tex', u'tkthread: Simplify using threads with tkinter',
    u'Robert J. Gautier', 'manual'),
 ]
 
@@ -230,7 +231,7 @@ latex_domain_indices=True
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'rjgtoys.tkthread', u'tkthread: Support for using threads with tkinter',
+    ('index', 'rjgtoys.tkthread', u'tkthread: Simplify using threads with tkinter',
      [u'Robert J. Gautier'], 3)
 ]
 
