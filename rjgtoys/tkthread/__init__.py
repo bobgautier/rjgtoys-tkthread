@@ -25,7 +25,7 @@ class EventQueue(queue.Queue):
 
     def __init__(self, widget, handler, maxsize=0):
         """
-        widget: A tkinter widget
+        widget: A tkinter widget, None` to use the default root widget
 
             This widget doesn't really have to be associated with the events that are
             to be generated, it is simply needed in order to allow creation of an event handler.
@@ -52,6 +52,7 @@ class EventQueue(queue.Queue):
         self._pipe_r, self._pipe_w = os.pipe()
         self._handler = handler
 
+        widget = widget or tk._default_root
         widget.tk.createfilehandler(self._pipe_r, tk.READABLE, self._readable)
 
     def shutdown(self):
@@ -181,11 +182,11 @@ class EventGenerator(threading.Thread):
         """
         name = str(name or _newname())
         super().__init__(group=group, name=name, daemon=True)
-        self._source = source
+        self._generator = generator
         self._queue = queue or EventQueue(widget=widget, handler=handler, maxsize=maxsize)
         if start:
             self.start()
 
     def run(self):
-        for work in self._source:
+        for work in self._generator:
             self._queue.put(work)

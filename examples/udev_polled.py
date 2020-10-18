@@ -14,9 +14,9 @@ import pyudev
 
 class UdevTracer:
 
-    def __init__(self, window):
+    def __init__(self, widget):
 
-        self.window = window
+        self.widget = widget
 
         self.queue = queue.Queue()
 
@@ -38,16 +38,16 @@ class UdevTracer:
 
     def cleanup(self):
         self.reset()
-        self.window.update()
-        self.window.after(5000, self.cleanup)
+        self.widget.update()
+        self.widget.after(5000, self.cleanup)
 
     def reset(self):
-        self.window.delete('1.0','end')
-        self.window.insert('1.0','Wait, or kill the window\n')
+        self.widget.delete('1.0','end')
+        self.widget.insert('1.0','Wait, or kill the window\n')
 
     def add_message(self, msg):
-        self.window.insert('end',msg)
-        self.window.insert('end', '\n')
+        self.widget.insert('end',msg)
+        self.widget.insert('end', '\n')
 
     def process(self):
         """Process queued messages."""
@@ -62,8 +62,8 @@ class UdevTracer:
                 break
             self.add_message(msg)
             self.queue.task_done()
-        self.window.update()
-        self.window.after_idle(self.process)
+        self.widget.update()
+        self.widget.after_idle(self.process)
 
 
 def main():

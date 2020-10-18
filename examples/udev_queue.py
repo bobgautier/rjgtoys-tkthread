@@ -12,16 +12,16 @@ import queue
 
 import pyudev
 
-from rjgtoys.tkthread import WorkQueue
+from rjgtoys.tkthread import EventQueue
 
 
 class UdevTracer:
 
-    def __init__(self, window):
+    def __init__(self, widget):
 
-        self.window = window
+        self.widget = widget
 
-        self.queue = WorkQueue(window, self.process)
+        self.queue = EventQueue(widget, self.add_message)
 
         self.cleanup()
 
@@ -39,33 +39,28 @@ class UdevTracer:
 
     def cleanup(self):
         self.reset()
-        self.window.update()
-        self.window.after(5000, self.cleanup)
+        self.widget.update()
+        self.widget.after(5000, self.cleanup)
 
     def reset(self):
-        self.window.delete('1.0','end')
-        self.window.insert('1.0','Wait, or kill the window\n')
+        self.widget.delete('1.0','end')
+        self.widget.insert('1.0','Wait, or kill the window\n')
 
     def add_message(self, msg):
-        self.window.insert('end',msg)
-        self.window.insert('end', '\n')
-
-    def process(self, msg):
-        """Process a queued message."""
-
-        self.add_message(msg)
+        self.widget.insert('end',msg)
+        self.widget.insert('end', '\n')
 
 
 def main():
 
     root = tk.Tk()
 
-    app = tk.Text(root)
+    w = tk.Text(root)
 
-    w = UdevTracer(app)
+    tracer = UdevTracer(w)
 
-    app.pack()
-    app.mainloop()
+    w.pack()
+    w.mainloop()
 
 if __name__ == "__main__":
     main()
