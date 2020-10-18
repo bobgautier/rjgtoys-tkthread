@@ -4,7 +4,7 @@ Tests for the EventQueue
 """
 
 import os
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, call
 
 import tkinter as tk
 
@@ -12,16 +12,7 @@ import pytest
 
 from rjgtoys.tkthread import EventQueue
 
-
-@pytest.fixture
-def widget():
-    """A Mock widget."""
-
-    w = Mock()
-    w.tk = Mock()
-    w.tk.create_filehandler = Mock()
-
-    return w
+from helpers import get_open_files, widget
 
 PIPE_R = 'pipe_r'   # NB: deliberately not even an integer
 PIPE_W = 'pipe_w'
@@ -29,6 +20,16 @@ PIPE_W = 'pipe_w'
 @pytest.fixture
 def mock_pipe():
     with patch('rjgtoys.tkthread.os.pipe', return_value=(PIPE_R, PIPE_W)) as p:
+        yield p
+
+@pytest.fixture
+def mock_close():
+    with patch('rjgtoys.tkthread.os.close', return_value=0) as p:
+        yield p
+
+@pytest.fixture
+def mock_close_failing():
+    with patch('rjgtoys.tkthread.os.close', side_effect=OSError('os.close fails')) as p:
         yield p
 
 @pytest.fixture
@@ -120,31 +121,6 @@ def test_eq_delivers_when_handler_raises(widget, mock_pipe, mock_write, mock_rea
 
     assert handled == ['event1', 'event2']
 
-def get_open_files():
-    """Get descriptions of open files for this process."""
-
-    procfd = '/proc/self/fd'
-
-    files = set()
-
-    for fd in os.listdir(procfd):
-        try:
-            info = os.readlink(os.path.join(procfd, fd))
-        except Exception as e:
-            continue
-        files.add((fd, info))
-
-    return files
-
-def test_get_open_files():
-    """Test the above fixture."""
-
-    before = get_open_files()
-    # Nothing changes...
-    after = get_open_files()
-
-    assert before
-    assert before == after
 
 
 def test_eq_shutdown_does_not_leak_pipes(widget):
@@ -156,7 +132,7 @@ def test_eq_shutdown_does_not_leak_pipes(widget):
 
     q = EventQueue(widget, handler)
 
-    q.shutdown()
+    q.drain()
 
     after = get_open_files()
 
@@ -176,3 +152,25 @@ def test_eq_context_does_not_leak_pipes(widget):
     after = get_open_files()
 
     assert before == after
+
+def test_eq_drain_handles_exception(widget, mock_close_failing):
+
+    # Test the fixture
+
+    with pytest.raises(Exception):
+        mock_close_failing('foo')
+
+    def handler(e):
+        raise Exception("Should never be called")
+
+    with EventQueue(widget, handler) as q:
+        pass
+
+    # Ensure that both calls were made, despite the exception
+
+    mock_close_failing.assert_has_calls(
+        [
+            call(q._pipe_r),
+            call(q._pipe_w)
+        ]
+    )

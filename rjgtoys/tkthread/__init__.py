@@ -55,18 +55,35 @@ class EventQueue(queue.Queue):
         widget = widget or tk._default_root
         widget.tk.createfilehandler(self._pipe_r, tk.READABLE, self._readable)
 
-    def shutdown(self):
+    def drain(self):
+        """Close the queue for further events, and process any that are waiting."""
+
+        # Close the pipe
+
         for p in (self._pipe_r, self._pipe_w):
             try:
                 os.close(p)
             except OSError:
                 pass
 
+        # Process all pending events
+
+        while True:
+            try:
+                event = self.get(block=False)
+            except queue.Empty:
+                break
+
+            try:
+                self._handler(event)
+            except Exception as e:
+                log.exception("Exception raised by event handler")
+
     def __enter__(self):
         return self
 
     def __exit__(self, typ, val, tbk):
-        self.shutdown()
+        self.drain()
 
     def _readable(self, what, how):
 
@@ -190,3 +207,10 @@ class EventGenerator(threading.Thread):
     def run(self):
         for work in self._generator:
             self._queue.put(work)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, typ, val, tbk):
+        self.join()
+        self._queue.drain()
