@@ -21,7 +21,6 @@ The examples provided demonstrate the difference in CPU cost between a
 .. toctree::
    :maxdepth: 2
 
-   overview
    tutorial
    reference
    getting

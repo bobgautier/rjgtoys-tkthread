@@ -1,8 +1,6 @@
 To-Do List
 ==========
 
-Test cases
+Have EventSource delete the queue at end of generator?
 
-Handle deletion properly - don't leak pipes, kill event handler
-
-Have EventSource handle end of generator properly - delete the queue or flush it?
+Improve docs about exception handling in event handlers.

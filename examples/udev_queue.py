@@ -1,7 +1,7 @@
 """
-Monitor udev, with tkinter and tkthread.WorkQueue
+Monitor udev, with tkinter and tkthread.EventQueue
 
-This one will not spin a CPU, because WorkQueue avoids tight polling.
+This one will not spin a CPU, because EventQueue avoids tight polling.
 
 """
 
@@ -21,7 +21,7 @@ class UdevTracer:
 
         self.widget = widget
 
-        self.queue = EventQueue(widget, self.add_message)
+        self.queue = EventQueue(handler=self.add_message, widget=widget)
 
         self.cleanup()
 

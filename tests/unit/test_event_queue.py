@@ -62,7 +62,7 @@ def test_eq_delivers(widget, mock_pipe, mock_write, mock_read):
     def handle_event(event):
         handled.append(event)
 
-    q = EventQueue(widget, handle_event)
+    q = EventQueue(handler=handle_event, widget=widget)
 
     assert_widget_has_handler(widget, q._readable)
 
@@ -96,7 +96,7 @@ def test_eq_delivers_when_handler_raises(widget, mock_pipe, mock_write, mock_rea
         handled.append(event)
         raise Exception("Could not handle %s" % (event))
 
-    q = EventQueue(widget, handle_event)
+    q = EventQueue(handler=handle_event, widget=widget)
 
     assert_widget_has_handler(widget, q._readable)
 
@@ -130,7 +130,8 @@ def test_eq_shutdown_does_not_leak_pipes(widget):
 
     before = get_open_files()
 
-    q = EventQueue(widget, handler)
+    # NB keyword args deliberately unusual way around here
+    q = EventQueue(widget=widget, handler=handler)
 
     q.drain()
 
@@ -146,7 +147,7 @@ def test_eq_context_does_not_leak_pipes(widget):
 
     before = get_open_files()
 
-    with EventQueue(widget, handler) as q:
+    with EventQueue(handler=handler, widget=widget) as q:
         pass
 
     after = get_open_files()
@@ -163,7 +164,7 @@ def test_eq_drain_handles_exception(widget, mock_close_failing):
     def handler(e):
         raise Exception("Should never be called")
 
-    with EventQueue(widget, handler) as q:
+    with EventQueue(widget=widget, handler=handler) as q:
         pass
 
     # Ensure that both calls were made, despite the exception

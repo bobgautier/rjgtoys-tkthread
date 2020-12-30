@@ -38,7 +38,14 @@ extensions = [
     'sphinx.ext.imgmath',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
+    'sphinx.ext.intersphinx',
 ]
+
+intersphinx_mapping = {
+    "python": ("http://docs.python.org/", None),
+    "pytest": ("http://pytest.org/latest", None),
+    "pyudev": ("https://pyudev.readthedocs.io/en/latest/", None),
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -235,8 +242,10 @@ man_pages = [
      [u'Robert J. Gautier'], 3)
 ]
 
-#
+# Don't use base class docstrings, if no local one is provided
+
+autodoc_inherit_docstrings = False
 
 # Include only the class docstring in autoclass output
 
-autoclass_content = 'both'
+autoclass_content = 'class'

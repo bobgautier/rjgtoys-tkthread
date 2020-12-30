@@ -1,7 +1,5 @@
 """
-Monitor udev, with tkinter and tkthread.WorkQueue
-
-This one will not spin a CPU, because WorkQueue avoids tight polling.
+Monitor udev, with tkinter and tkthread.EventGenerator
 
 """
 
