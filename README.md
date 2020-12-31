@@ -1,7 +1,7 @@
 # tkthread - Enable threads to interact with tkinter
 
-Like most GUI frameworks, Tk (in Python, tkinter) is event-driven, and not
-thread-safe.   It's not possible to interact with a tkinter UI from a thread
+Tk (in Python, tkinter) is not thread-safe.   It's not possible
+to interact with a tkinter UI from a thread
 other than the one in which it is running its event loop.
 
 There are a number of workarounds, but they generally boil down to doing

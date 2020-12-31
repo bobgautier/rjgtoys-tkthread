@@ -1,7 +1,7 @@
 rjgtoys.tkthread: Simplify using threads with tkinter
 =====================================================
 
-Like most GUI frameworks, Tk (in Python, tkinter) is event-driven, and not
+Tk (in Python, tkinter) is not
 thread-safe.   It's not possible to interact with a tkinter UI from a thread
 other than the one in which its event loop is running.
 
